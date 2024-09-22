@@ -1,0 +1,196 @@
+#include <iostream>
+using namespace std;
+
+#define MAX 10
+
+class Deque {
+private:
+    int deque[MAX];
+    int front;
+    int rear;
+
+public:
+    Deque() 
+    {
+        front = -1;
+        rear = -1;
+    }
+
+    void insertFront(int ele) 
+    {
+        // Check if the deque is full
+        if ((front == 0 && rear == MAX - 1) || (rear + 1 == front)) 
+        {
+            cout << "Deque is full" << endl;
+            return;
+        }
+
+        // If deque is empty, initialize front and rear
+        if (front == -1) 
+        {
+            front = rear = 0;
+        } 
+        else if (front == 0) 
+        {
+            front = MAX - 1;  // Circularly wrap front to end
+        } 
+        else 
+        {
+            front--;
+        }
+
+        deque[front] = ele;
+    }
+
+    void insertRear(int ele) 
+    {
+        // Check if the deque is full
+        if ((front == 0 && rear == MAX - 1) || (rear + 1 == front)) 
+        {
+            cout << "Deque is full" << endl;
+            return;
+        }
+
+        // If deque is empty, initialize front and rear
+        if (rear == -1) 
+        {
+            front = rear = 0;
+        } 
+        else if (rear == MAX - 1) 
+        {
+            rear = 0;  // Circularly wrap rear to start
+        } 
+        else 
+        {
+            rear++;
+        }
+
+        deque[rear] = ele;
+    }
+
+    void deleteFront() 
+    {
+        // Check if the deque is empty
+        if (front == -1) 
+        {
+            cout << "Deque is empty" << endl;
+            return;
+        }
+
+        cout << "Element deleted from front is " << deque[front] << endl;
+
+        // If the deque has only one element
+        if (front == rear) 
+        {
+            front = rear = -1;  // Reset to empty
+        } 
+        else if (front == MAX - 1) 
+        {
+            front = 0;  // Circularly wrap front to start
+        } 
+        else 
+        {
+            front++;
+        }
+    }
+
+    void deleteRear() 
+    {
+        // Check if the deque is empty
+        if (rear == -1) 
+        {
+            cout << "Deque is empty" << endl;
+            return;
+        }
+
+        cout << "Element deleted from rear is " << deque[rear] << endl;
+
+        // If the deque has only one element
+        if (front == rear) 
+        {
+            front = rear = -1;  // Reset to empty
+        } 
+        else if (rear == 0) 
+        {
+            rear = MAX - 1;  // Circularly wrap rear to end
+        } 
+        else 
+        {
+            rear--;
+        }
+    }
+
+    void display() 
+    {
+        // Check if the deque is empty
+        if (front == -1) 
+        {
+            cout << "Deque is empty" << endl;
+            return;
+        }
+
+        cout << "Deque elements are: ";
+
+        if (front <= rear) 
+        {
+            // No wrap around
+            for (int i = front; i <= rear; i++) 
+            {
+                cout << deque[i] << " ";
+            }
+        } 
+        else 
+        {
+            // Wrap around
+            for (int i = front; i < MAX; i++) 
+            {
+                cout << deque[i] << " ";
+            }
+            for (int i = 0; i <= rear; i++) 
+            {
+                cout << deque[i] << " ";
+            }
+        }
+
+        cout << endl;
+    }
+};
+
+int main() 
+{
+    Deque dq;
+    int ch, ele;
+    do 
+    {
+        cout << "\n1. Insert element at front\n2. Insert element at rear\n3. Delete element from front\n4. Delete element from rear\n5. Display deque elements\n0. Exit\nChoose: ";
+        cin >> ch;
+        switch (ch) 
+        {
+            case 1:
+                cout << "Enter the element: ";
+                cin >> ele;
+                dq.insertFront(ele);
+                break;
+            case 2:
+                cout << "Enter the element: ";
+                cin >> ele;
+                dq.insertRear(ele);
+                break;
+            case 3:
+                dq.deleteFront();
+                break;
+            case 4:
+                dq.deleteRear();
+                break;
+            case 5:
+                dq.display();
+                break;
+            case 0:
+                cout << "Exiting..." << endl;
+                break;
+            default:
+                cout << "Wrong choice" << endl;
+        }
+    } while (ch != 0);
+    return 0;
+}
