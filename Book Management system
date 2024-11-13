@@ -1,0 +1,191 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+using namespace std;
+// Structure to represent a book
+struct Book {
+    string title;
+    string author;
+    string isbn;
+    bool availabilityStatus; // true for available, false for borrowed
+    Book* next; // Pointer to the next book in the list
+    Book(string t, string a, string i, bool status) 
+        : title(t), author(a), isbn(i), availabilityStatus(status), next(nullptr) {}
+};
+// Class to represent the Library
+class Library {
+private:
+    Book* head; // Pointer to the first book in the linked list
+public:
+    // Constructor
+    Library() : head(nullptr) {}
+    // Destructor to free memory
+    ~Library() {
+        Book* current = head;
+        while (current != nullptr) {
+            Book* temp = current;
+            current = current->next;
+            delete temp;
+        }
+    }
+    // Function to add a book to the library
+    void addBook(const string& title, const string& author, const string& isbn, bool availability) {
+        Book* newBook = new Book(title, author, isbn, availability);
+        if (!head) {
+            head = newBook;
+        } else {
+            Book* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newBook;
+        }
+        cout << "\nBook added successfully!\n";
+    }
+    // Function to remove a book by ISBN
+    void removeBook(const string& isbn) {
+        if (!head) {
+            cout << "\nLibrary is empty!\n";
+            return;
+        }
+        Book* current = head;
+        Book* previous = nullptr;
+        // Check if the book to be removed is the first book
+        if (current && current->isbn == isbn) {
+            head = current->next;
+            delete current;
+            cout << "\nBook removed successfully!\n";
+            return;
+        }
+        // Search for the book to remove
+        while (current && current->isbn != isbn) {
+            previous = current;
+            current = current->next;
+        }
+        if (!current) {
+            cout << "\nBook not found!\n";
+            return;
+        }
+        // Remove the book from the linked list
+        previous->next = current->next;
+        delete current;
+        cout << "\nBook removed successfully!\n";
+    }
+    // Function to search for a book by title
+    void searchBookByTitle(const string& title) {
+        if (!head) {
+            cout << "\nLibrary is empty!\n";
+            return;
+        }
+        Book* current = head;
+        bool found = false;
+        while (current) {
+            if (current->title == title) {
+                cout << "\nBook found: \n";
+                displayBookDetails(current);
+                found = true;
+            }
+            current = current->next;
+        }
+        if (!found) {
+            cout << "\nBook with the given title not found!\n";
+        }
+    }
+    // Function to display all books
+    void displayAllBooks() {
+        if (!head) {
+            cout << "\nLibrary is empty!\n";
+            return;
+        }
+        Book* current = head;
+        cout << "\nLibrary Collection: \n";
+        while (current) {
+            displayBookDetails(current);
+            current = current->next;
+        }
+    }
+    // Function to sort books by title
+    void sortBooksByTitle() {
+        if (!head || !head->next) return; // No need to sort if list is empty or has only one book
+        bool swapped;
+        do {
+            swapped = false;
+            Book* current = head;
+            while (current->next) {
+                if (current->title > current->next->title) {
+                    // Swap titles, authors, isbn, and availabilityStatus
+                    swap(current->title, current->next->title);
+                    swap(current->author, current->next->author);
+                    swap(current->isbn, current->next->isbn);
+                    swap(current->availabilityStatus, current->next->availabilityStatus);
+                    swapped = true;
+                }
+                current = current->next;
+            }
+        } while (swapped);
+        cout << "\nBooks sorted by title.\n";
+    }
+private:
+    // Helper function to display a book's details
+    void displayBookDetails(Book* book) {
+        cout << left << setw(25) << book->title
+             << setw(20) << book->author
+             << setw(15) << book->isbn
+             << setw(12) << (book->availabilityStatus ? "Available" : "Borrowed") << endl;
+    }
+};
+int main() {
+    Library lib;
+    int choice;
+    string title, author, isbn;
+    bool availability;
+    do {
+        cout << "\n--- Library Management System ---\n";
+        cout << "1. Add a Book\n";
+        cout << "2. Remove a Book\n";
+        cout << "3. Search Book by Title\n";
+        cout << "4. Display All Books\n";
+        cout << "5. Sort Books by Title\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // To ignore the newline character left in the input buffer
+        switch (choice) {
+            case 1:
+                cout << "\nEnter Book Title: ";
+                getline(cin, title);
+                cout << "Enter Author: ";
+                getline(cin, author);
+                cout << "Enter ISBN: ";
+                getline(cin, isbn);
+                cout << "Is the book available? (1 for yes, 0 for no): ";
+                cin >> availability;
+                lib.addBook(title, author, isbn, availability);
+                break;
+            case 2:
+                cout << "\nEnter ISBN of the book to remove: ";
+                getline(cin, isbn);
+                lib.removeBook(isbn);
+                break;
+            case 3:
+                cout << "\nEnter Book Title to Search: ";
+                getline(cin, title);
+                lib.searchBookByTitle(title);
+                break;
+            case 4:
+                lib.displayAllBooks();
+                break;
+            case 5:
+                lib.sortBooksByTitle();
+                break;
+            case 6:
+                cout << "\nExiting the system...\n";
+                break;
+            default:
+                cout << "\nInvalid choice! Please try again.\n";
+        }
+    } while (choice != 6);
+    return 0;
+}
+
+
