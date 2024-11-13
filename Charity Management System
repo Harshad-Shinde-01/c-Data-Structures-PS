@@ -1,0 +1,195 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+using namespace std;
+// Structure to represent a donor
+struct Donor {
+    int donorID;
+    string name;
+    string email;
+    double donationAmount;
+    Donor* next; // Pointer to the next donor in the list
+    Donor(int id, const string& n, const string& e, double d)
+        : donorID(id), name(n), email(e), donationAmount(d), next(nullptr) {}
+};
+// Class to represent the Charity Management System
+class CharityManagement {
+private:
+    Donor* head; // Pointer to the first donor in the linked list
+public:
+    // Constructor
+    CharityManagement() : head(nullptr) {}
+    // Destructor to free memory
+    ~CharityManagement() {
+        Donor* current = head;
+        while (current != nullptr) {
+            Donor* temp = current;
+            current = current->next;
+            delete temp;
+        }
+    }
+    // Function to add a donor to the charity system
+    void addDonor(int id, const string& name, const string& email, double donationAmount) {
+        Donor* newDonor = new Donor(id, name, email, donationAmount);
+        if (!head) {
+            head = newDonor;
+        } else {
+            Donor* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newDonor;
+        }
+        cout << "\nDonor added successfully!\n";
+    }
+    // Function to remove a donor by donor ID
+    void removeDonor(int id) {
+        if (!head) {
+            cout << "\nNo donors to remove!\n";
+            return;
+        }
+        Donor* current = head;
+        Donor* previous = nullptr;
+        // If the donor to be removed is the first donor
+        if (current && current->donorID == id) {
+            head = current->next;
+            delete current;
+            cout << "\nDonor removed successfully!\n";
+            return;
+        }
+        // Search for the donor to remove
+        while (current && current->donorID != id) {
+            previous = current;
+            current = current->next;
+        }
+        if (!current) {
+            cout << "\nDonor with the given ID not found!\n";
+            return;
+        }
+        // Remove the donor from the list
+        previous->next = current->next;
+        delete current;
+        cout << "\nDonor removed successfully!\n";
+    }
+    // Function to update donor information by donor ID
+    void updateDonor(int id) {
+        if (!head) {
+            cout << "\nNo donors available!\n";
+            return;
+        }
+        Donor* current = head;
+        while (current) {
+            if (current->donorID == id) {
+                cout << "\nUpdating information for Donor ID: " << id << endl;
+                cout << "Enter new name: ";
+                getline(cin, current->name);
+                cout << "Enter new email: ";
+                getline(cin, current->email);
+                cout << "Enter new donation amount: ";
+                cin >> current->donationAmount;
+                cin.ignore(); // To ignore the newline character left in the buffer
+                cout << "\nDonor information updated successfully!\n";
+                return;
+            }
+            current = current->next;
+        }
+        cout << "\nDonor with the given ID not found!\n";
+    }
+    // Function to search for a donor by donor ID
+    void searchDonor(int id) {
+        if (!head) {
+            cout << "\nNo donors in the system!\n";
+            return;
+        }
+        Donor* current = head;
+        while (current) {
+            if (current->donorID == id) {
+                displayDonorDetails(current);
+                return;
+            }
+            current = current->next;
+        }
+        cout << "\nDonor with the given ID not found!\n";
+    }
+    // Function to display all donors in the system
+    void displayAllDonors() {
+        if (!head) {
+            cout << "\nNo donors in the system!\n";
+            return;
+        }
+        Donor* current = head;
+        cout << "\n--- List of All Donors ---\n";
+        cout << left << setw(10) << "Donor ID" << setw(25) << "Name" << setw(30) << "Email" << setw(15) << "Donation Amount" << endl;
+        cout << string(80, '-') << endl;
+        while (current) {
+            displayDonorDetails(current);
+            current = current->next;
+        }
+    }
+private:
+    // Helper function to display donor details
+    void displayDonorDetails(Donor* donor) {
+        cout << left << setw(10) << donor->donorID
+             << setw(25) << donor->name
+             << setw(30) << donor->email
+             << setw(15) << fixed << setprecision(2) << donor->donationAmount << endl;
+    }
+};
+int main() {
+    CharityManagement cm;
+    int choice;
+    int donorID;
+    string name, email;
+    double donationAmount;
+    do {
+        cout << "\n--- Charity Management System ---\n";
+        cout << "1. Add a Donor\n";
+        cout << "2. Remove a Donor\n";
+        cout << "3. Update Donor Information\n";
+        cout << "4. Search for a Donor\n";
+        cout << "5. Display All Donors\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // To clear the input buffer
+        switch (choice) {
+            case 1:
+                cout << "\nEnter Donor ID: ";
+                cin >> donorID;
+                cin.ignore();
+                cout << "Enter Name: ";
+                getline(cin, name);
+                cout << "Enter Email: ";
+                getline(cin, email);
+                cout << "Enter Donation Amount: ";
+                cin >> donationAmount;
+                cm.addDonor(donorID, name, email, donationAmount);
+                break;
+            case 2:
+                cout << "\nEnter Donor ID to remove: ";
+                cin >> donorID;
+                cm.removeDonor(donorID);
+                break;
+            case 3:
+                cout << "\nEnter Donor ID to update: ";
+                cin >> donorID;
+                cin.ignore(); // To clear the input buffer
+                cm.updateDonor(donorID);
+                break;
+            case 4:
+                cout << "\nEnter Donor ID to search: ";
+                cin >> donorID;
+                cm.searchDonor(donorID);
+                break;
+            case 5:
+                cm.displayAllDonors();
+                break;
+            case 6:
+                cout << "\nExiting the system...\n";
+                break;
+            default:
+                cout << "\nInvalid choice! Please try again.\n";
+        }
+    } while (choice != 6);
+    return 0;
+}
