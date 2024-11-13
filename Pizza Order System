@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+using namespace std;
+#define MAX 10
+string queue[MAX];
+int rear = -1;
+int front = -1;
+void enqueue() {
+    string order;
+    if (rear == MAX - 1) {
+        cout << "Orders full\n";
+    } else {
+        cout << "Enter your pizza order: ";
+        cin.ignore(); 
+        getline(cin, order);       
+        rear++;
+        queue[rear] = order;
+        if (front == -1) front = 0; 
+    }
+}
+void dequeue() {
+    if (front == -1 || front > rear) {
+        cout << "No Orders\n";
+    } else {
+        string order = queue[front];
+        cout << "Current order is: " << order << endl;
+        front++;
+    }
+}
+void display() {
+    if (front == -1 || front > rear) {
+        cout << "No orders\n";
+    } else {
+        cout << "All remaining orders:\n";
+        for (int i = front; i <= rear; i++) {
+            cout << queue[i] << endl;
+        }
+    }
+}
+int main() {
+    int ch;
+    do {
+        cout << "\n1. Place order\n2. View current order\n3. Display all orders\nChoose (0 to exit): ";
+        cin >> ch;
+        switch (ch) {
+            case 1:
+                enqueue();
+                break;
+            case 2:
+                dequeue();
+                break;
+            case 3:
+                display();
+                break;
+            case 0:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Wrong choice\n";
+        }
+    } while (ch != 0);
+    return 0;
+}
